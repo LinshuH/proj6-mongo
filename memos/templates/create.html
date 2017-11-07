@@ -1,6 +1,6 @@
 <!DOCTYPE HTML PUBLIC "-//IETF//DTD HTML//EN">
 <html> <head>
-<title>Memos</title>
+<title>Create</title>
 
   <!-- 'viewport' is used by bootstrap to respond to device size -->
   <meta name="viewport" content="width=device-width, initial-scale=1">
@@ -26,6 +26,7 @@
 <div class="container">
 
 
+
 <!-- Flashed messages before content -->
 {% with messages = get_flashed_messages() %}
   {% if messages %}
@@ -39,32 +40,46 @@
 
 <h1>Memos</h1>
 
-<!-- Connect with create.html to put the data to database 
-
--->
-
-{% if g.memos %}
-<div>
-  <a href="/create">Create Memo here</a>
+<!-- Get the user input of the date and memory -->
+<div class="row">
+<div class="col-xs-6 text-center">
+  <label>Memo Date: </label>
+  <input type=date name="input_date" id="input_date"/>
 </div>
-{% for memo in g.memos|sort(attribute='date') %}  <!-- sort the memo based on date -->
+<div>
+  <label>Memo Text: </label>
+  <input type="text" name="input_text" id="input_text"/>
+</div>  
+</div>
 
-  <div class="memo">
-  <div class="row">
-  <div class="col-md-2">
-    {{ memo.date | humanize }}
-    }
-  </div>
-  <div class="col-md-10">
-    {{ memo.text }}
-  </div>
-  </div> <!-- row -->
-  </div> <!-- memo -->
-  {% endfor %}
-{% else %}
-  <p>No memos for you. </p>  
-{% endif %}
+<button type="button" name="create_memo" id="create_memo">Create Memo</button>
 
+
+<script type="text/javascript">
+  function create() {
+
+  var SCRIPT_ROOT = {{ request.script_root|tojson|safe }} ;
+  var memo_url = SCRIPT_ROOT + "/_create_memo";
+  var input_date = $("#input_date").val();
+  var input_text = $("#input_text").val();
+  console.log("input_date is: "+input_date+"; text is: "+input_text);
+
+  $.getJSON(memo_url, {input_date:input_date, input_text:input_text},
+		  function(){}
+	   );
+  window.location = "/";
+  } //end create function
+
+  $(document).ready(function() {
+  	$('button[name="create_memo"]').click(
+  		function() {
+  			create();
+  		}); 
+  })
+  
+
+
+</script>
  
 
 </div> <!-- container -->

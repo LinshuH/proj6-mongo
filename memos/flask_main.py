@@ -81,11 +81,25 @@ def index():
   return flask.render_template('index.html')
 
 
-# We don't have an interface for creating memos yet
-# @app.route("/create")
-# def create():
-#     app.logger.debug("Create")
-#     return flask.render_template('create.html')
+# create.html connect to this function and this function put the information into db database
+
+@app.route("/create") #connect to the page
+def create():
+  app.logger.debug("Create")
+  return flask.render_template('create.html')
+
+@app.route("/_create_memo")  #function that create the memo
+def create_memo():
+    input_date = request.agrs.get("input_date","2017-01-01T00:00:00",type=str)
+    date = arrow.get(input_date).isoformat()
+    text = request.agrs.get("input_text","Hello!",type=str)
+	
+    record = { "type": "dated_memo", 
+           "date":  date,
+           "text": text
+          }
+    collection.insert(record)
+    return flask.jsonify()
 
 
 @app.errorhandler(404)
@@ -119,6 +133,8 @@ def humanize_arrow_date( date ):
             human = then.humanize(now)
             if human == "in a day":
                 human = "Tomorrow"
+            if human == "a dat ago":
+                human = "Yesterday" 
     except: 
         human = date
     return human
