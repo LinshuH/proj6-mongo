@@ -28,7 +28,9 @@ import arrow
 from dateutil import tz  # For interpreting local times
 
 # Mongo database
+import pymongo
 from pymongo import MongoClient
+
 
 import config
 CONFIG = config.configuration()
@@ -90,9 +92,9 @@ def create():
 
 @app.route("/_create_memo")  #function that create the memo
 def create_memo():
-    input_date = request.agrs.get("input_date","2017-01-01T00:00:00",type=str)
+    input_date = flask.request.args.get("input_date","2017-01-01T00:00:00",type=str)
     date = arrow.get(input_date).isoformat()
-    text = request.agrs.get("input_text","Hello!",type=str)
+    text = flask.request.args.get("input_text","Hello!",type=str)
 	
     record = { "type": "dated_memo", 
            "date":  date,
@@ -100,6 +102,15 @@ def create_memo():
           }
     collection.insert(record)
     return flask.jsonify()
+
+@app.route("/_delete_memo",methods=["POST"])
+def delete_memo():
+    delete = flask.request.form["delete"]
+    delete2 = delete.split(",")
+    date = delete2[0]
+    text = delete2[1]
+    collection.remove({"text":text},{"date":date})
+    return index()
 
 
 @app.errorhandler(404)
@@ -124,17 +135,18 @@ def humanize_arrow_date( date ):
     Arrow will try to humanize down to the minute, so we
     need to catch 'today' as a special case. 
     """
+
     try:
-        then = arrow.get(date).to('local')
-        now = arrow.utcnow().to('local')
-        if then.date() == now.date():
+        then = arrow.get(date).replace(tzinfo='local')
+        now = arrow.now().replace(tzinfo='local')
+        if then.shift(days=-1).date() == now.date():
+            human = "Tomorrow"
+        elif now.shift(days=-1).date() == then.date():
+            human = "Yesterday"
+        elif then.date() == now.date():
             human = "Today"
-        else: 
+        else:
             human = then.humanize(now)
-            if human == "in a day":
-                human = "Tomorrow"
-            if human == "a dat ago":
-                human = "Yesterday" 
     except: 
         human = date
     return human
@@ -151,10 +163,12 @@ def get_memos():
     can be inserted directly in the 'session' object.
     """
     records = [ ]
-    for record in collection.find( { "type": "dated_memo" } ):
+    #collection.find({}).sort({"date":1})
+    for record in collection.find( { "type": "dated_memo" } ).sort("date", pymongo.ASCENDING):
         record['date'] = arrow.get(record['date']).isoformat()
         del record['_id']
         records.append(record)
+	#return sorted(records, key=date)
     return records 
 
 

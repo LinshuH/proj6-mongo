@@ -30,7 +30,7 @@
 {% with messages = get_flashed_messages() %}
   {% if messages %}
     <ul class=flashes>
-    {% for message in messages %}
+    {% for message in messages %}/_create_memo
       <li>{{ message }}</li>
     {% endfor %}
     </ul>
@@ -40,24 +40,30 @@
 <h1>Memos</h1>
 
 <!-- Connect with create.html to put the data to database 
-
 -->
 
-{% if g.memos %}
 <div>
-  <a href="/create">Create Memo here</a>
+  <a href="/create"><button>Create Memo here</button></a>
 </div>
-{% for memo in g.memos|sort(attribute='date') %}  <!-- sort the memo based on date -->
 
+
+
+{% if g.memos %}
+{% for memo in g.memos %} 
+<form id="delete" action="_delete_memo" method="POST">
   <div class="memo">
   <div class="row">
   <div class="col-md-2">
+  <button type="submit" name="delete" id="delete" value="{{memo.date+','+memo.text}}" >Delete</button>
+  <!--How to tell program that when I click the button, then call the function? Rather than for every entry it -->
     {{ memo.date | humanize }}
-    }
+ 
   </div>
   <div class="col-md-10">
     {{ memo.text }}
   </div>
+  <div class
+
   </div> <!-- row -->
   </div> <!-- memo -->
   {% endfor %}
@@ -65,7 +71,7 @@
   <p>No memos for you. </p>  
 {% endif %}
 
- 
+</form> <!-- end form -->
 
 </div> <!-- container -->
 </body>

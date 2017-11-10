@@ -41,6 +41,18 @@
 <h1>Memos</h1>
 
 <!-- Get the user input of the date and memory -->
+<!-- 
+<div class="row">
+  <div class="col-xs-6 text-center">
+  <form id="entry">
+    <label for="attempt">Word:</label>
+    <input id="attempt" name="attempt" type="text" width="15"
+      autocomplete="off"  autofocus />
+    <input type="submit" name="try" />
+  </form>
+</div></div>
+-->
+<form id="entry">
 <div class="row">
 <div class="col-xs-6 text-center">
   <label>Memo Date: </label>
@@ -49,12 +61,13 @@
 <div>
   <label>Memo Text: </label>
   <input type="text" name="input_text" id="input_text"/>
-</div>  
+</div> 
 </div>
-
 <button type="button" name="create_memo" id="create_memo">Create Memo</button>
+<a href="/index">Go To Main Page</a> 
+</form>
 
-
+<!-- for the Create page, user needs click "Create Memo" to create and refresh the page after "Create Memo" to input the new information-->
 <script type="text/javascript">
   function create() {
 
@@ -67,14 +80,14 @@
   $.getJSON(memo_url, {input_date:input_date, input_text:input_text},
 		  function(){}
 	   );
-  window.location = "/";
   } //end create function
 
   $(document).ready(function() {
+  	console.log("Binding buttons");
   	$('button[name="create_memo"]').click(
   		function() {
   			create();
-  		}); 
+  		});
   })
   
 
