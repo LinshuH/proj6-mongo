@@ -60,6 +60,7 @@ app.secret_key = CONFIG.SECRET_KEY
 
 try: 
     dbclient = MongoClient(MONGO_CLIENT_URL)
+    app.logger.info(MONGO_CLIENT_URL)
     db = getattr(dbclient, CONFIG.DB)
     collection = db.dated
 

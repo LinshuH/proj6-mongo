@@ -50,20 +50,20 @@
 
 {% if g.memos %}
 {% for memo in g.memos %} 
+
 <form id="delete" action="_delete_memo" method="POST">
   <div class="memo">
   <div class="row">
+
   <div class="col-md-2">
   <button type="submit" name="delete" id="delete" value="{{memo.date+','+memo.text}}" >Delete</button>
   <!--How to tell program that when I click the button, then call the function? Rather than for every entry it -->
     {{ memo.date | humanize }}
- 
   </div>
+
   <div class="col-md-10">
     {{ memo.text }}
   </div>
-  <div class
-
   </div> <!-- row -->
   </div> <!-- memo -->
   {% endfor %}
